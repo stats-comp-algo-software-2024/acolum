@@ -31,3 +31,14 @@ simulate_data <- function(
   outcome <- expected_mean + noise
   return(list(design = design, outcome = outcome, coef_true = coef_true))
 }
+
+# Function from HW2 to approximate the gradient of a given function via finite difference
+approx_grad <- function(func, x, dx = .Machine$double.eps^(1/3)) {
+  dimension <- length(x)
+  numerical_grad <- rep(0, dimension)
+  for(i in 1:dimension){
+    e_i = replace(rep(0, dimension), i, 1)
+    numerical_grad[i] = (func(x + dx*e_i) - func(x - dx*e_i))/(2*dx)
+  }
+  return(numerical_grad)
+}

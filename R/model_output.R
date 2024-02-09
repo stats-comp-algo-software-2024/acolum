@@ -1,9 +1,7 @@
 #' @export
 coef.hglm <- function(hglm_out){
-  # Warn that the S3 method is yet to be implemented
-  warning('This method is yet to be implemented.')
-  # TODO: Implement coef.hglm S3 method
-  cat('The coefficients are ...')
+  coef <- hglm_out$coef
+  return(coef)
 }
 
 #' @export
