@@ -6,7 +6,7 @@ are_all_close <- function(v, w, abs_tol = 1e-6, rel_tol = 1e-6) {
 }
 
 simulate_data <- function(
-    n_obs, n_pred, model = "linear", intercept = NULL,
+    n_obs, n_pred, model = 'linear', intercept = NULL,
     coef_true = NULL, design = NULL, seed = NULL, signal_to_noise = 0.1
 ) {
   if (!is.null(seed)) {
@@ -20,7 +20,7 @@ simulate_data <- function(
   }
   if (!is.null(intercept)) {
     if (!is.numeric(intercept)) {
-      stop("The intercept argument must be numeric.")
+      stop('The intercept argument must be numeric.')
     }
     coef_true <- c(intercept, coef_true)
     design <- cbind(rep(1, n_obs), design)
@@ -32,7 +32,7 @@ simulate_data <- function(
   return(list(design = design, outcome = outcome, coef_true = coef_true))
 }
 
-# Function from HW2 to approximate the gradient of a given function via finite difference
+#' Function from HW2 to approximate the gradient of a given function via finite difference
 approx_grad <- function(func, x, dx = .Machine$double.eps^(1/3)) {
   dimension <- length(x)
   numerical_grad <- rep(0, dimension)

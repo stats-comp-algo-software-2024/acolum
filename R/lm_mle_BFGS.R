@@ -13,7 +13,7 @@ loglik_gradient <- function(design, outcome, beta, noise_var = 1) {
 }
 
 #' Implement the MLE finder via BFGS
-glm_mle_BFGS <- function(design, outcome, noise_var = 1) {
+lm_mle_BFGS <- function(design, outcome, noise_var = 1) {
   np <- ncol(design)
   result <- stats::optim(
     par = rep(0, np), fn = log_likelihood, gr = loglik_gradient,

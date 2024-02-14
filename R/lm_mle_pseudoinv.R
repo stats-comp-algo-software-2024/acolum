@@ -1,5 +1,5 @@
 #' Implement the MLE finder via pseudo-inverse (using Cholesky decomposition)
-glm_mle_pseudoinv <- function(design, outcome) {
+lm_mle_pseudoinv <- function(design, outcome) {
   a <- crossprod(design)
   b <- crossprod(design, outcome)
   upper <- chol(a)
