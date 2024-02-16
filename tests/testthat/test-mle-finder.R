@@ -27,18 +27,15 @@ test_that('The analytical and numerical gradients match (should return `TRUE`)',
   sim_data <- simulate_data(n_obs = 5, n_pred = 2, model = 'linear',
                             seed = 1234)
   n_test <- 10
-  grads_are_close <- TRUE
   for (i in 1:n_test) {
-    if (!grads_are_close) break
     beta <- rnorm(2)
     analytical_grad <- loglik_gradient(sim_data$design, sim_data$outcome, beta)
     numerical_grad <- approx_grad(function(beta) log_likelihood(sim_data$design,
                                                                 sim_data$outcome,
                                                                 beta),
                                   beta)
-    grads_are_close <- are_all_close(analytical_grad, numerical_grad)
+    expect_true(are_all_close(analytical_grad, numerical_grad))
   }
-  expect_true(grads_are_close)
 })
 
 test_that('MLEs estimated via pseudo-inverse and via BFGS match (should return `TRUE`)', {
