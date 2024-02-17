@@ -56,7 +56,6 @@ simulate_data <- function(
   return(list(design = design, outcome = outcome, coef_true = coef_true))
 }
 
-#' Function from HW2 to approximate the gradient of a given function via finite difference
 approx_grad <- function(func, x, dx = .Machine$double.eps^(1/3)) {
   dimension <- length(x)
   numerical_grad <- rep(0, dimension)
