@@ -15,8 +15,7 @@ test_that('Analytical and numerical gradients match in logistic regression (shou
 test_that('Analytical and numerical Hessians match in logistic regression (should return `TRUE`)', {
   n_obs <- 32; n_pred <- 4
   data <- simulate_data(n_obs, n_pred, model = 'logit', seed = 1918)
-  design <- data$design
-  outcome <- data$outcome
+  design <- data$design; outcome <- data$outcome
   set.seed(615)
   n_test <- 10
   for (i in 1:n_test) {
@@ -33,9 +32,8 @@ test_that('MLEs estimated via Newton\'s method and via BFGS match in logistic re
   n_obs <- 32; n_pred <- 4
   data <- simulate_data(n_obs, n_pred, model = 'logit', seed = 1918)
   design <- data$design; outcome <- data$outcome
-  via_newton_out <- hiper_glm(design, outcome, model = 'logit', method = 'newton')
-  via_bfgs_out <- hiper_glm(design, outcome, model = 'logit', method = 'BFGS')
-  expect_true(are_all_close(
-    coef(via_newton_out), coef(via_bfgs_out), abs_tol = 1e-2, rel_tol = 1e-2
-  ))
+  newton_result <- hiper_glm(design, outcome, model = 'logit', method = 'newton')
+  BFGS_result <- hiper_glm(design, outcome, model = 'logit', method = 'BFGS')
+  expect_true(are_all_close(coef(newton_result), coef(BFGS_result),
+                            abs_tol = 1e-2, rel_tol = 1e-2))
 })

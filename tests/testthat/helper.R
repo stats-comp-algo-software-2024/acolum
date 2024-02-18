@@ -1,10 +1,3 @@
-are_all_close <- function(v, w, abs_tol = 1e-6, rel_tol = 1e-6) {
-  abs_diff <- abs(v - w)
-  are_all_within_atol <- all(abs_diff < abs_tol)
-  are_all_within_rtol <- all(abs_diff < rel_tol * pmax(abs(v), abs(w)))
-  return(are_all_within_atol && are_all_within_rtol)
-}
-
 simulate_data <- function(
     n_obs, n_pred, model = 'linear', intercept = NULL,
     coef_true = NULL, design = NULL, seed = NULL, option = list()
@@ -43,9 +36,6 @@ simulate_data <- function(
   } else {
     n_trial <- option$n_trial
     prob <- 1 / (1 + exp(-expected_mean))
-    # Object type of `outcome` returned by this function is variable. One should
-    # in general be careful about introducing this type of inconsistency, but
-    # sometimes one might find it the most natural and/or reasonable thing to do.
     if (is.null(n_trial)) {
       outcome <- rbinom(n_obs, 1, prob)
     } else {

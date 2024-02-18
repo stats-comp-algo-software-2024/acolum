@@ -41,21 +41,27 @@ mle_BFGS <- function(design, outcome, model, ...) {
 #' Implement the MLE finder via Newton's method for logistic models
 mle_newton <- function(design, outcome, tol = NULL, max_iter = 50) {
   n_pred <- ncol(design)
-  if (is.null(tol)) {
-    tol <- 1e-5
-  }
   beta <- rep(0, n_pred)
   log_lik_old <- logit_log_likelihood(design, outcome, beta)
   iter <- 0
-  while (iter < max_iter) {
+  converged <- FALSE
+  while ((iter < max_iter) && (!converged)) {
     grad <- logit_loglik_gradient(design, outcome, beta)
     hess <- logit_hessian(design, beta)
     beta <- beta - solve(hess, grad)
     log_lik_new <- logit_log_likelihood(design, outcome, beta)
+    converged <- are_all_close(log_lik_old, log_lik_new,
+                               abs_tol = tol, rel_tol = tol)
     iter <- iter + 1
     log_lik_old <- log_lik_new
   }
+  if (converged) {
+    cat('MLE(s) found after ', iter, ' iterations with convergence.')
+  } else {
+    warning('The MLE finder (Newton\'s method) failed to converge after ', iter, ' iterations.
+            The estimates provided may be meaningless.')
+  }
   return(list(
-    coef = beta, info_mat = -hess, iter = iter
+    coef = beta, info_mat = -hess, converged = converged, iter = iter
   ))
 }
