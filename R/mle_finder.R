@@ -1,4 +1,4 @@
-#' Implement the MLE finder via pseudo-inverse (using Cholesky decomposition)
+#' Implement the MLE finder via pseudo-inverse (using Cholesky decomposition) for linear models
 mle_pseudoinv <- function(design, outcome) {
   a <- crossprod(design)
   b <- crossprod(design, outcome)
@@ -36,4 +36,26 @@ mle_BFGS <- function(design, outcome, model, ...) {
     warning('Optimization did not converge. The estimates provided may be meaningless.')
   }
   return(list(coef = result$par, converged = optim_converged))
+}
+
+#' Implement the MLE finder via Newton's method for logistic models
+mle_newton <- function(design, outcome, tol = NULL, max_iter = 50) {
+  n_pred <- ncol(design)
+  if (is.null(tol)) {
+    tol <- 1e-5
+  }
+  beta <- rep(0, n_pred)
+  log_lik_old <- logit_log_likelihood(design, outcome, beta)
+  iter <- 0
+  while (iter < max_iter) {
+    grad <- logit_loglik_gradient(design, outcome, beta)
+    hess <- logit_hessian(design, beta)
+    beta <- beta - solve(hess, grad)
+    log_lik_new <- logit_log_likelihood(design, outcome, beta)
+    iter <- iter + 1
+    log_lik_old <- log_lik_new
+  }
+  return(list(
+    coef = beta, info_mat = -hess, iter = iter
+  ))
 }

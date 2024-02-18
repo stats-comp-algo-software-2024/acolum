@@ -11,7 +11,7 @@ test_that('MLEs estimated via pseudo-inverse are close to true coefficients in l
   expect_true(are_all_close(coef(pseudoinv_out), sim_data$coef_true))
 })
 
-test_that('MLEs estimated via BFSG are close to true coefficients in linear regression (should return `TRUE`)', {
+test_that('MLEs estimated via BFGS are close to true coefficients in linear regression (should return `TRUE`)', {
   sim_data <- simulate_data(n_obs = 5, n_pred = 2, model = 'linear',
                             intercept = 5,
                             coef_true = c(-4, 2.5),
