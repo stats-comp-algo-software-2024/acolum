@@ -1,4 +1,4 @@
-test_that('MLEs estimated via pseudo-inverse are close to truth (should return `TRUE`)', {
+test_that('MLEs estimated via pseudo-inverse are close to true coefficients in linear regression (should return `TRUE`)', {
   sim_data <- simulate_data(n_obs = 5, n_pred = 2, model = 'linear',
                             intercept = 5,
                             coef_true = c(-4, 2.5),
@@ -7,41 +7,39 @@ test_that('MLEs estimated via pseudo-inverse are close to truth (should return `
                             seed = 1234)
   design <- sim_data$design
   outcome <- as.matrix(design %*% sim_data$coef_true)
-  expect_true(are_all_close(lm_mle_pseudoinv(design, outcome), sim_data$coef_true))
+  pseudoinv_out <- hiper_glm(design, outcome, model = 'linear', method = 'pseudoinv')
+  expect_true(are_all_close(coef(pseudoinv_out), sim_data$coef_true))
 })
 
-test_that('MLEs estimated via BFSG are close to truth (should return `TRUE`)', {
+test_that('MLEs estimated via BFGS are close to true coefficients in linear regression (should return `TRUE`)', {
   sim_data <- simulate_data(n_obs = 5, n_pred = 2, model = 'linear',
                             intercept = 5,
                             coef_true = c(-4, 2.5),
                             design = as.matrix(cbind(rnorm(5, 0, 1),
-                                                  rnorm(5, 10, 2))),
+                                                     rnorm(5, 10, 2))),
                             seed = 1234)
   design <- sim_data$design
   outcome <- as.matrix(design %*% sim_data$coef_true)
-  expect_true(are_all_close(lm_mle_BFGS(design, outcome, noise_var = 0.1),
-                            sim_data$coef_true))
+  BFGS_out <- hiper_glm(design, outcome, model = 'linear', method = 'BFGS')
+  expect_true(are_all_close(coef(BFGS_out), sim_data$coef_true))
 })
 
-test_that('The analytical and numerical gradients match (should return `TRUE`)', {
+test_that('Analytical and numerical gradients match in linear regression (should return `TRUE`)', {
   sim_data <- simulate_data(n_obs = 5, n_pred = 2, model = 'linear',
                             seed = 1234)
   n_test <- 10
-  grads_are_close <- TRUE
   for (i in 1:n_test) {
-    if (!grads_are_close) break
     beta <- rnorm(2)
-    analytical_grad <- loglik_gradient(sim_data$design, sim_data$outcome, beta)
-    numerical_grad <- approx_grad(function(beta) log_likelihood(sim_data$design,
+    analytical_grad <- lm_loglik_gradient(sim_data$design, sim_data$outcome, beta)
+    numerical_grad <- approx_grad(function(beta) lm_log_likelihood(sim_data$design,
                                                                 sim_data$outcome,
                                                                 beta),
                                   beta)
-    grads_are_close <- are_all_close(analytical_grad, numerical_grad)
+    expect_true(are_all_close(analytical_grad, numerical_grad))
   }
-  expect_true(grads_are_close)
 })
 
-test_that('MLEs estimated via pseudo-inverse and via BFGS match (should return `TRUE`)', {
+test_that('MLEs estimated via pseudo-inverse and via BFGS match in linear regression (should return `TRUE`)', {
   sim_data <- simulate_data(n_obs = 5, n_pred = 2, model = 'linear',
                             seed = 1234)
   pseudoinv_result <- hiper_glm(design = sim_data$design, outcome = sim_data$outcome,
